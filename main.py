@@ -6,7 +6,7 @@ import bs4
 from selenium import webdriver
 import util
 
-auto_log = 0
+auto_log = 1
 
 
 def freshkiller_s(url):

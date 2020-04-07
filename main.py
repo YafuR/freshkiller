@@ -24,9 +24,21 @@ def freshkiller_s(url):
     start_time = time.time()
     while no_slots:
         n+=1
+        time.sleep(random.randint(1, 6))
         driver.refresh()
         soup = bs4.BeautifulSoup(driver.page_source, 'html.parser')
-        warning_sentence = soup.find_all('h4',class_ = 'a-alert-heading')
+        if "An error occurred when we" in soup:
+            driver = webdriver.Chrome(executable_path='./chromedriver')
+            driver.get(url)
+            soup = bs4.BeautifulSoup(driver.page_source, 'html.parser')
+            if not auto_log:
+                time.sleep(45)
+            else:
+                util.auto_login(driver)
+        warning_sentence = soup.find_all('h4', class_='a-alert-heading')
+        for index,sentence in enumerate(warning_sentence):
+            if "Please check back later" in str(sentence):
+                del warning_sentence[index]
         if len(warning_sentence) != 3:
             availibility = True
             no_slots = False
@@ -40,7 +52,6 @@ def freshkiller_s(url):
             for i in range(10):
                 os.system('say "Slots Founded"')
             time.sleep(3600)
-        time.sleep(random.randint(1,10))
         print(str(n) + "st try, run time:" + str(time.time() - start_time))
 
 if __name__ == '__main__':
